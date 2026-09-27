@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hi, I'm Dilfan Najib 👋
+# Hi, I'm Dilfan Najib 
 
 ### Junior Fullstack Web Developer from Cianjur, Indonesia
 
@@ -51,39 +51,6 @@ Currently learning, building, and improving one project at a time.
 
 ---
 
-## 🚀 Featured Projects
-
-### 🏭 Production Order Management System
-
-A production management system designed to manage workflow from order creation to delivery.
-
-**Built with:** Laravel · PHP · MySQL
-
----
-
-### 📊 Alumni Monitoring Dashboard
-
-A dashboard for managing, monitoring, and visualizing alumni data.
-
-**Built with:** Laravel · PHP · MySQL · JavaScript
-
----
-
-### 📱 Attendance System
-
-A school attendance system using **QR Code, location verification, and face recognition**.
-
-**Built with:** Laravel · PHP · MySQL · JavaScript
-
----
-
-### 🌱 Eco Track
-
-A web application concept focused on environmental tracking and data management.
-
-**Built with:** Laravel · PHP · MySQL
-
----
 
 ## 🐍 Contribution Snake
 
