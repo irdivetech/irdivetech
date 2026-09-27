@@ -17,20 +17,22 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Generate Custom Snake
+      - name: Generate growing snake
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: irdivetech
         run: |
+          set -euo pipefail
+
           node <<'NODE'
-          const fs = require("fs");
-          const https = require("https");
+          const fs = require('fs');
+          const https = require('https');
 
           const TOKEN = process.env.GITHUB_TOKEN;
           const USERNAME = process.env.GITHUB_USERNAME;
 
           if (!TOKEN) {
-            throw new Error("GITHUB_TOKEN tidak tersedia.");
+            throw new Error('GITHUB_TOKEN tidak tersedia.');
           }
 
           const query = `
@@ -41,8 +43,8 @@ jobs:
                     totalContributions
                     weeks {
                       contributionDays {
-                        contributionCount
                         date
+                        contributionCount
                         weekday
                       }
                     }
@@ -52,42 +54,52 @@ jobs:
             }
           `;
 
-          function graphqlRequest() {
+          function requestGraphQL() {
             return new Promise((resolve, reject) => {
               const body = JSON.stringify({
                 query,
-                variables: {
-                  login: USERNAME
-                }
+                variables: { login: USERNAME }
               });
 
               const req = https.request(
                 {
-                  hostname: "api.github.com",
-                  path: "/graphql",
-                  method: "POST",
+                  hostname: 'api.github.com',
+                  path: '/graphql',
+                  method: 'POST',
                   headers: {
-                    "Authorization": `Bearer ${TOKEN}`,
-                    "Content-Type": "application/json",
-                    "User-Agent": "custom-github-snake",
-                    "Content-Length": Buffer.byteLength(body)
+                    Authorization: `Bearer ${TOKEN}`,
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'irdivetech-growing-snake',
+                    'Content-Length': Buffer.byteLength(body)
                   }
                 },
                 (res) => {
-                  let response = "";
+                  let response = '';
 
-                  res.on("data", chunk => {
+                  res.on('data', chunk => {
                     response += chunk;
                   });
 
-                  res.on("end", () => {
+                  res.on('end', () => {
                     try {
                       const parsed = JSON.parse(response);
+
+                      if (
+                        res.statusCode < 200 ||
+                        res.statusCode >= 300
+                      ) {
+                        reject(
+                          new Error(
+                            `GitHub API HTTP ${res.statusCode}: ${response}`
+                          )
+                        );
+                        return;
+                      }
 
                       if (parsed.errors) {
                         reject(
                           new Error(
-                            JSON.stringify(parsed.errors)
+                            `GitHub GraphQL error: ${JSON.stringify(parsed.errors)}`
                           )
                         );
                         return;
@@ -101,39 +113,57 @@ jobs:
                 }
               );
 
-              req.on("error", reject);
+              req.on('error', reject);
               req.write(body);
               req.end();
             });
           }
 
-          function esc(value) {
+          function xmlEscape(value) {
             return String(value)
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;")
-              .replace(/'/g, "&apos;");
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&apos;');
           }
 
-          function contributionColor(count, dark) {
+          function colorFor(count, dark) {
             if (dark) {
-              if (count === 0) return "#161b22";
-              if (count <= 2) return "#0e4429";
-              if (count <= 5) return "#006d32";
-              if (count <= 9) return "#26a641";
-              return "#39d353";
+              if (count === 0) return '#161b22';
+              if (count <= 2) return '#0e4429';
+              if (count <= 5) return '#006d32';
+              if (count <= 9) return '#26a641';
+              return '#39d353';
             }
 
-            if (count === 0) return "#ebedf0";
-            if (count <= 2) return "#9be9a8";
-            if (count <= 5) return "#40c463";
-            if (count <= 9) return "#30a14e";
-            return "#216e39";
+            if (count === 0) return '#ebedf0';
+            if (count <= 2) return '#9be9a8';
+            if (count <= 5) return '#40c463';
+            if (count <= 9) return '#30a14e';
+            return '#216e39';
+          }
+
+          /*
+           * Growth rules:
+           *
+           * 1-2 contributions = +1 segment
+           * 3-5 contributions = +2 segments
+           * 6-9 contributions = +3 segments
+           * 10+ contributions = +4 segments
+           */
+          function growthFor(count) {
+            if (count <= 0) return 0;
+            if (count <= 2) return 1;
+            if (count <= 5) return 2;
+            if (count <= 9) return 3;
+            return 4;
           }
 
           function buildSvg(calendar, darkMode) {
             const weeks = calendar.weeks;
+            const columns = weeks.length;
+            const rows = 7;
 
             const cell = 11;
             const gap = 3;
@@ -141,10 +171,7 @@ jobs:
             const left = 18;
             const top = 18;
             const right = 18;
-            const bottom = 34;
-
-            const columns = weeks.length;
-            const rows = 7;
+            const bottom = 36;
 
             const width =
               left +
@@ -159,168 +186,252 @@ jobs:
               bottom;
 
             const cells = [];
+            const cellsByKey = new Map();
 
             for (let col = 0; col < columns; col++) {
               for (let row = 0; row < rows; row++) {
-                const day =
-                  weeks[col].contributionDays.find(
-                    item => item.weekday === row
-                  );
+                const day = weeks[col].contributionDays.find(
+                  item => item.weekday === row
+                );
 
-                cells.push({
+                const item = {
                   col,
                   row,
-                  count: day?.contributionCount || 0,
-                  date: day?.date || ""
-                });
+                  date: day?.date || '',
+                  count: day?.contributionCount || 0
+                };
+
+                cells.push(item);
+                cellsByKey.set(
+                  `${col}:${row}`,
+                  item
+                );
               }
             }
 
             /*
-             * Snake path:
+             * Build a continuous serpentine route.
              *
-             * column 0 -> top to bottom
-             * column 1 -> bottom to top
-             * column 2 -> top to bottom
+             * Column 0:
+             * 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6
              *
-             * Every next cell is adjacent.
+             * Column 1:
+             * 6 -> 5 -> 4 -> 3 -> 2 -> 1 -> 0
+             *
+             * This ensures the snake never jumps diagonally.
              */
-            const path = [];
+            const route = [];
 
             for (let col = 0; col < columns; col++) {
-              const order =
+              const rowOrder =
                 col % 2 === 0
                   ? [0, 1, 2, 3, 4, 5, 6]
                   : [6, 5, 4, 3, 2, 1, 0];
 
-              for (const row of order) {
-                path.push({ col, row });
+              for (const row of rowOrder) {
+                const item =
+                  cellsByKey.get(`${col}:${row}`);
+
+                route.push({
+                  col,
+                  row,
+                  count: item?.count || 0,
+                  date: item?.date || '',
+                  x:
+                    left +
+                    col * (cell + gap) +
+                    cell / 2,
+                  y:
+                    top +
+                    row * (cell + gap) +
+                    cell / 2
+                });
               }
             }
 
-            const food = new Map();
+            const totalSegments =
+              Math.max(1, route.length - 1);
 
-            for (const item of cells) {
-              food.set(
-                `${item.col}:${item.row}`,
-                item.count
-              );
-            }
-
-            const INITIAL_LENGTH = 4;
-            const MAX_LENGTH = 90;
+            /*
+             * Snake starts small.
+             * MAX_LENGTH prevents the snake from covering
+             * the entire graph too early.
+             */
+            const INITIAL_LENGTH = 3;
+            const MAX_LENGTH = Math.min(
+              75,
+              totalSegments
+            );
 
             let snakeLength = INITIAL_LENGTH;
 
-            /*
-             * Each contribution cell acts as food.
-             *
-             * 1 contribution = +1 segment
-             * 2-3 contributions = +2 segments
-             * 4-5 contributions = +3 segments
-             * 6+ contributions = +4 segments
-             *
-             * This makes growth visibly easier to notice.
-             */
-            const growthFor = count => {
-              if (count <= 0) return 0;
-              if (count === 1) return 1;
-              if (count <= 3) return 2;
-              if (count <= 5) return 3;
-              return 4;
-            };
+            const forwardFrames = [];
 
-            const frames = [];
+            for (let i = 0; i < route.length; i++) {
+              const current = route[i];
 
-            for (let i = 0; i < path.length; i++) {
-              const head = path[i];
-
-              const count =
-                food.get(
-                  `${head.col}:${head.row}`
-                ) || 0;
-
-              if (count > 0) {
+              /*
+               * Eat contribution cell.
+               */
+              if (current.count > 0) {
                 snakeLength = Math.min(
                   MAX_LENGTH,
-                  snakeLength + growthFor(count)
+                  snakeLength +
+                    growthFor(current.count)
                 );
               }
 
-              const start =
+              const startIndex =
                 Math.max(
                   0,
                   i - snakeLength + 1
                 );
 
-              /*
-               * Head first.
-               */
-              const body =
-                path
-                  .slice(start, i + 1)
-                  .reverse();
+              const visibleLength =
+                Math.max(
+                  1,
+                  i - startIndex
+                );
 
-              frames.push({
-                body,
-                length: body.length
+              forwardFrames.push({
+                headX: current.x,
+                headY: current.y,
+                startRatio:
+                  startIndex /
+                  totalSegments,
+                lengthRatio:
+                  visibleLength /
+                  totalSegments
               });
             }
 
             /*
-             * At least one complete animation cycle:
-             * 36 seconds.
+             * Reverse the animation so it loops
+             * without a hard jump.
              */
-            const duration = "36s";
+            const frames = [
+              ...forwardFrames,
+              ...forwardFrames.slice(
+                0,
+                -1
+              ).reverse()
+            ];
 
-            const bg =
-              darkMode
-                ? "#0d1117"
-                : "#ffffff";
+            const headXValues =
+              frames
+                .map(
+                  frame => frame.headX
+                )
+                .join(';');
 
-            const border =
-              darkMode
-                ? "#30363d"
-                : "#d0d7de";
+            const headYValues =
+              frames
+                .map(
+                  frame => frame.headY
+                )
+                .join(';');
 
-            const snakeColor =
-              darkMode
-                ? "#58a6ff"
-                : "#0969da";
+            const dashArrayValues =
+              frames
+                .map(
+                  frame =>
+                    `${Math.max(
+                      1 / totalSegments,
+                      frame.lengthRatio
+                    )} 1`
+                )
+                .join(';');
 
-            const headColor =
-              darkMode
-                ? "#79c0ff"
-                : "#0550ae";
+            const dashOffsetValues =
+              frames
+                .map(
+                  frame =>
+                    `-${frame.startRatio}`
+                )
+                .join(';');
 
-            const parts = [];
+            const eyeXValues =
+              frames
+                .map(
+                  frame =>
+                    frame.headX - 1.8
+                )
+                .join(';');
 
-            /*
-             * Background
-             */
-            parts.push(`
-              <rect
-                width="100%"
-                height="100%"
-                rx="12"
-                fill="${bg}"
-                stroke="${border}"
-              />
-            `);
+            const eyeYValues =
+              frames
+                .map(
+                  frame =>
+                    frame.headY - 1.8
+                )
+                .join(';');
 
-            /*
-             * Contribution graph
-             */
-            parts.push(`
-              <g>
-                ${cells.map(item => {
+            const routePoints =
+              route
+                .map(
+                  point =>
+                    `${point.x},${point.y}`
+                )
+                .join(' ');
+
+            const duration = '42s';
+
+            const background = darkMode
+              ? '#0d1117'
+              : '#ffffff';
+
+            const border = darkMode
+              ? '#30363d'
+              : '#d0d7de';
+
+            const snakeColor = darkMode
+              ? '#58a6ff'
+              : '#0969da';
+
+            const headColor = darkMode
+              ? '#79c0ff'
+              : '#0550ae';
+
+            const textColor = darkMode
+              ? '#8b949e'
+              : '#57606a';
+
+            const foodColor = darkMode
+              ? '#7ee787'
+              : '#1a7f37';
+
+            return `<?xml version="1.0" encoding="UTF-8"?>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="${width}"
+            height="${height}"
+            viewBox="0 0 ${width} ${height}"
+            role="img"
+            aria-label="Growing GitHub contribution snake"
+          >
+
+            <!-- Background -->
+            <rect
+              width="100%"
+              height="100%"
+              rx="12"
+              fill="${background}"
+              stroke="${border}"
+            />
+
+            <!-- GitHub contribution calendar -->
+            <g>
+              ${cells
+                .map(item => {
                   const x =
                     left +
-                    item.col * (cell + gap);
+                    item.col *
+                      (cell + gap);
 
                   const y =
                     top +
-                    item.row * (cell + gap);
+                    item.row *
+                      (cell + gap);
 
                   return `
                     <rect
@@ -329,261 +440,176 @@ jobs:
                       width="${cell}"
                       height="${cell}"
                       rx="2.5"
-                      fill="${contributionColor(
+                      fill="${colorFor(
                         item.count,
                         darkMode
                       )}"
                     >
                       <title>
-                        ${esc(
-                          `${item.date}: ${item.count} contribution${item.count === 1 ? "" : "s"}`
+                        ${xmlEscape(
+                          `${item.date}: ${item.count} contribution${item.count === 1 ? '' : 's'}`
                         )}
                       </title>
                     </rect>
                   `;
-                }).join("")}
-              </g>
-            `);
+                })
+                .join('')}
+            </g>
 
-            /*
-             * Food pulse.
-             */
-            parts.push(`
-              <g>
-                ${cells
-                  .filter(item => item.count > 0)
-                  .map(item => {
-                    const x =
-                      left +
-                      item.col * (cell + gap) +
-                      cell / 2;
+            <!-- Contribution cells behave as food -->
+            <g>
+              ${cells
+                .filter(
+                  item =>
+                    item.count > 0
+                )
+                .map(item => {
+                  const x =
+                    left +
+                    item.col *
+                      (cell + gap) +
+                    cell / 2;
 
-                    const y =
-                      top +
-                      item.row * (cell + gap) +
-                      cell / 2;
+                  const y =
+                    top +
+                    item.row *
+                      (cell + gap) +
+                    cell / 2;
 
-                    return `
-                      <circle
-                        cx="${x}"
-                        cy="${y}"
-                        r="2"
-                        fill="${darkMode ? "#7ee787" : "#1a7f37"}"
-                        opacity="0.45"
-                      >
-                        <animate
-                          attributeName="r"
-                          values="1.5;3;1.5"
-                          dur="1.5s"
-                          repeatCount="indefinite"
-                        />
-                        <animate
-                          attributeName="opacity"
-                          values="0.3;0.8;0.3"
-                          dur="1.5s"
-                          repeatCount="indefinite"
-                        />
-                      </circle>
-                    `;
-                  })
-                  .join("")}
-              </g>
-            `);
+                  return `
+                    <circle
+                      cx="${x}"
+                      cy="${y}"
+                      r="2"
+                      fill="${foodColor}"
+                      opacity="0.35"
+                    >
+                      <animate
+                        attributeName="r"
+                        values="1.4;2.8;1.4"
+                        dur="1.4s"
+                        repeatCount="indefinite"
+                      />
 
-            /*
-             * IMPORTANT:
-             *
-             * Every snake segment is a separate circle.
-             *
-             * This makes actual growth visible:
-             *
-             *  segment 1
-             *  segment 2
-             *  segment 3
-             *       ↓
-             *  eat
-             *       ↓
-             *  segment 4
-             *  segment 5
-             */
-            const maxSegments = MAX_LENGTH;
+                      <animate
+                        attributeName="opacity"
+                        values="0.25;0.8;0.25"
+                        dur="1.4s"
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                  `;
+                })
+                .join('')}
+            </g>
 
-            for (
-              let segmentIndex = maxSegments - 1;
-              segmentIndex >= 0;
-              segmentIndex--
-            ) {
-              const cxValues = [];
-              const cyValues = [];
-              const opacityValues = [];
+            <!--
+              CONTINUOUS SNAKE BODY
 
-              for (const frame of frames) {
-                const point =
-                  frame.body[segmentIndex];
+              The polyline follows every cell in the
+              contribution graph.
 
-                if (!point) {
-                  cxValues.push(-50);
-                  cyValues.push(-50);
-                  opacityValues.push(0);
-                  continue;
-                }
+              stroke-dasharray controls how much of
+              that path is visible.
 
-                const x =
-                  left +
-                  point.col * (cell + gap) +
-                  cell / 2;
+              When the snake eats a contribution cell,
+              lengthRatio increases, so the visible
+              portion gets longer.
+            -->
+            <polyline
+              points="${routePoints}"
+              fill="none"
+              stroke="${snakeColor}"
+              stroke-width="7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              pathLength="1"
+            >
 
-                const y =
-                  top +
-                  point.row * (cell + gap) +
-                  cell / 2;
+              <!-- Growth -->
+              <animate
+                attributeName="stroke-dasharray"
+                dur="${duration}"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values="${dashArrayValues}"
+              />
 
-                cxValues.push(x);
-                cyValues.push(y);
-                opacityValues.push(1);
-              }
+              <!-- Tail movement -->
+              <animate
+                attributeName="stroke-dashoffset"
+                dur="${duration}"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values="${dashOffsetValues}"
+              />
 
-              /*
-               * Tail/body segments.
-               */
-              parts.push(`
-                <circle
-                  cx="${cxValues[0]}"
-                  cy="${cyValues[0]}"
-                  r="${cell * 0.34}"
-                  fill="${snakeColor}"
-                  opacity="${opacityValues[0]}"
-                >
-                  <animate
-                    attributeName="cx"
-                    dur="${duration}"
-                    repeatCount="indefinite"
-                    calcMode="discrete"
-                    values="${cxValues.join(";")}"
-                  />
+            </polyline>
 
-                  <animate
-                    attributeName="cy"
-                    dur="${duration}"
-                    repeatCount="indefinite"
-                    calcMode="discrete"
-                    values="${cyValues.join(";")}"
-                  />
+            <!-- Snake head -->
+            <circle
+              cx="${frames[0].headX}"
+              cy="${frames[0].headY}"
+              r="5.2"
+              fill="${headColor}"
+            >
 
-                  <animate
-                    attributeName="opacity"
-                    dur="${duration}"
-                    repeatCount="indefinite"
-                    calcMode="discrete"
-                    values="${opacityValues.join(";")}"
-                  />
-                </circle>
-              `);
-            }
+              <animate
+                attributeName="cx"
+                dur="${duration}"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values="${headXValues}"
+              />
 
-            /*
-             * Animated head.
-             */
-            const headX = [];
-            const headY = [];
+              <animate
+                attributeName="cy"
+                dur="${duration}"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values="${headYValues}"
+              />
 
-            for (const frame of frames) {
-              const point = frame.body[0];
+            </circle>
 
-              const x =
-                left +
-                point.col * (cell + gap) +
-                cell / 2;
+            <!-- Snake eye -->
+            <circle
+              cx="${frames[0].headX - 1.8}"
+              cy="${frames[0].headY - 1.8}"
+              r="1.35"
+              fill="#ffffff"
+            >
 
-              const y =
-                top +
-                point.row * (cell + gap) +
-                cell / 2;
+              <animate
+                attributeName="cx"
+                dur="${duration}"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values="${eyeXValues}"
+              />
 
-              headX.push(x);
-              headY.push(y);
-            }
+              <animate
+                attributeName="cy"
+                dur="${duration}"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values="${eyeYValues}"
+              />
 
-            parts.push(`
-              <circle
-                cx="${headX[0]}"
-                cy="${headY[0]}"
-                r="${cell * 0.46}"
-                fill="${headColor}"
-              >
-                <animate
-                  attributeName="cx"
-                  dur="${duration}"
-                  repeatCount="indefinite"
-                  calcMode="discrete"
-                  values="${headX.join(";")}"
-                />
+            </circle>
 
-                <animate
-                  attributeName="cy"
-                  dur="${duration}"
-                  repeatCount="indefinite"
-                  calcMode="discrete"
-                  values="${headY.join(";")}"
-                />
-              </circle>
-            `);
+            <!-- Footer -->
+            <text
+              x="${width / 2}"
+              y="${height - 11}"
+              text-anchor="middle"
+              font-family="Arial, Helvetica, sans-serif"
+              font-size="10"
+              fill="${textColor}"
+            >
+              🐍 ${calendar.totalContributions.toLocaleString()} contributions • eat to grow
+            </text>
 
-            /*
-             * Eye.
-             */
-            const eyeX = headX.map(x => x - 1.7);
-            const eyeY = headY.map(y => y - 1.7);
-
-            parts.push(`
-              <circle
-                cx="${eyeX[0]}"
-                cy="${eyeY[0]}"
-                r="1.4"
-                fill="#ffffff"
-              >
-                <animate
-                  attributeName="cx"
-                  dur="${duration}"
-                  repeatCount="indefinite"
-                  calcMode="discrete"
-                  values="${eyeX.join(";")}"
-                />
-
-                <animate
-                  attributeName="cy"
-                  dur="${duration}"
-                  repeatCount="indefinite"
-                  calcMode="discrete"
-                  values="${eyeY.join(";")}"
-                />
-              </circle>
-            `);
-
-            /*
-             * Footer.
-             */
-            parts.push(`
-              <text
-                x="${width / 2}"
-                y="${height - 11}"
-                text-anchor="middle"
-                font-family="Arial, Helvetica, sans-serif"
-                font-size="10"
-                fill="${darkMode ? "#8b949e" : "#57606a"}"
-              >
-                🐍 ${calendar.totalContributions.toLocaleString()} contributions
-              </text>
-            `);
-
-            return `<?xml version="1.0" encoding="UTF-8"?>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="${width}"
-            height="${height}"
-            viewBox="0 0 ${width} ${height}"
-          >
-            ${parts.join("\n")}
           </svg>`;
           }
 
@@ -593,16 +619,17 @@ jobs:
             );
 
             const data =
-              await graphqlRequest();
+              await requestGraphQL();
 
             const calendar =
-              data?.user
+              data
+                ?.user
                 ?.contributionsCollection
                 ?.contributionCalendar;
 
             if (!calendar) {
               throw new Error(
-                "Contribution calendar tidak ditemukan."
+                'Contribution calendar tidak ditemukan.'
               );
             }
 
@@ -615,22 +642,30 @@ jobs:
             );
 
             fs.mkdirSync(
-              "/tmp/snake",
+              '/tmp/snake',
               { recursive: true }
             );
 
             fs.writeFileSync(
-              "/tmp/snake/github-contribution-grid-snake.svg",
-              buildSvg(calendar, false)
+              '/tmp/snake/github-contribution-grid-snake.svg',
+              buildSvg(
+                calendar,
+                false
+              ),
+              'utf8'
             );
 
             fs.writeFileSync(
-              "/tmp/snake/github-contribution-grid-snake-dark.svg",
-              buildSvg(calendar, true)
+              '/tmp/snake/github-contribution-grid-snake-dark.svg',
+              buildSvg(
+                calendar,
+                true
+              ),
+              'utf8'
             );
 
             console.log(
-              "Custom growing snake berhasil dibuat."
+              'Growing Snake berhasil dibuat.'
             );
           }
 
@@ -640,30 +675,71 @@ jobs:
           });
           NODE
 
-      - name: Publish Snake
-        run: |
-          set -e
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          rm -rf dist
-          mkdir -p dist
-
-          cp /tmp/snake/github-contribution-grid-snake.svg dist/
-          cp /tmp/snake/github-contribution-grid-snake-dark.svg dist/
-
-          touch dist/.nojekyll
-
-          git init
-          git checkout --orphan output
-
-          git add dist
-
-          git commit -m "Update growing contribution snake"
-
-          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/irdivetech/irdivetech.git"
-
-          git subtree push --prefix dist origin output
+      - name: Publish to output branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          GIT_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          rm -rf publish
+
+          if git ls-remote \
+            --exit-code \
+            --heads \
+            "$GIT_URL" \
+            output >/dev/null 2>&1; then
+
+            echo "Output branch exists."
+            git clone \
+              --depth 1 \
+              --branch output \
+              "$GIT_URL" \
+              publish
+
+          else
+
+            echo "Creating output branch."
+
+            mkdir publish
+            cd publish
+
+            git init
+            git checkout --orphan output
+            git remote add origin "$GIT_URL"
+
+            cd ..
+
+          fi
+
+          cp \
+            /tmp/snake/github-contribution-grid-snake.svg \
+            publish/github-contribution-grid-snake.svg
+
+          cp \
+            /tmp/snake/github-contribution-grid-snake-dark.svg \
+            publish/github-contribution-grid-snake-dark.svg
+
+          touch publish/.nojekyll
+
+          cd publish
+
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            github-contribution-grid-snake.svg \
+            github-contribution-grid-snake-dark.svg \
+            .nojekyll
+
+          if git diff --cached --quiet; then
+            echo "No changes to publish."
+            exit 0
+          fi
+
+          git commit \
+            -m "Update growing contribution snake"
+
+          git push origin output
