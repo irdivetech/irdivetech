@@ -204,6 +204,11 @@ jobs:
            * of blindly moving across the contribution calendar.
            */
           function nextStepTowardFood(head, food, body, growing, cols, rows, random) {
+            /*
+             * BFS starts at the HEAD and finds the shortest safe route
+             * to the current food. We then return only the FIRST STEP,
+             * so every frame moves exactly one grid cell.
+             */
             const blocked = new Set();
 
             const obstacleBody = growing
@@ -217,14 +222,14 @@ jobs:
             blocked.delete(key(head));
             blocked.delete(key(food));
 
-            const queue = [food];
+            const queue = [head];
             const cameFrom = new Map();
-            const visited = new Set([key(food)]);
+            const visited = new Set([key(head)]);
 
             while (queue.length) {
               const current = queue.shift();
 
-              if (same(current, head)) {
+              if (same(current, food)) {
                 break;
               }
 
@@ -246,24 +251,27 @@ jobs:
               }
             }
 
-            const headKey = key(head);
+            const foodKey = key(food);
 
-            if (!visited.has(headKey)) {
+            if (!visited.has(foodKey)) {
               return null;
             }
 
-            let cursor = head;
+            let cursor = food;
+            let previous = cameFrom.get(foodKey);
             let safety = 0;
 
-            while (!same(cursor, food) && safety < cols * rows) {
-              const parent = cameFrom.get(key(cursor));
-              if (!parent) return null;
-              if (same(parent, food)) return cursor;
-              cursor = parent;
+            while (previous && !same(previous, head) && safety < cols * rows) {
+              cursor = previous;
+              previous = cameFrom.get(key(cursor));
               safety += 1;
             }
 
-            return null;
+            if (!previous || !same(previous, head)) {
+              return null;
+            }
+
+            return cursor;
           }
 
           function pickFood(head, body, cols, rows, random, recentFoodKeys = new Set()) {
@@ -677,7 +685,7 @@ jobs:
                   dur="${duration}"
                   repeatCount="indefinite"
                   calcMode="discrete"
-                  values="${foodScale.map(v => `${v} ${v}`).join(';')}"
+                  values="${foodScale}"
                 />
               </g>
             `);
