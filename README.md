@@ -128,18 +128,6 @@ IrDive is a digital initiative focused on building **web applications, informati
 
 ---
 
-## 🌍 Portfolio
-
-<div align="center">
-
-<a href="https://portofolio-dilfan.irdive.my.id/">
-<img src="https://img.shields.io/badge/View%20My%20Portfolio-Visit%20Website-0F172A?style=for-the-badge&logo=googlechrome&logoColor=white"/>
-</a>
-
-</div>
-
----
-
 <div align="center">
 
 ### Build. Learn. Improve. Repeat.
