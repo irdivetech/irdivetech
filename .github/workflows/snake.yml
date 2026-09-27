@@ -1,33 +1,612 @@
-name: Generate Snake
+name: Custom Contribution Snake
 
 on:
   schedule:
-    - cron: "0 */24 * * *"
+    - cron: "0 0 * * *"
   workflow_dispatch:
   push:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   generate:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
+    timeout-minutes: 10
 
     steps:
-      - name: Generate Snake
-        uses: Platane/snk/svg-only@v3
-        with:
-          github_user_name: irdivetech
-          outputs: |
-            dist/github-contribution-grid-snake.svg
-            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-      - name: Deploy Snake
-        uses: crazy-max/ghaction-github-pages@v3
-        with:
-          build_dir: dist
-          target_branch: output
+      - name: Generate custom snake
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: irdivetech
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          const https = require("https");
+
+          const TOKEN = process.env.GITHUB_TOKEN;
+          const USERNAME = process.env.GITHUB_USERNAME;
+
+          if (!TOKEN) {
+            throw new Error("GITHUB_TOKEN is missing.");
+          }
+
+          const graphqlQuery = `
+            query($login: String!) {
+              user(login: $login) {
+                contributionsCollection {
+                  contributionCalendar {
+                    totalContributions
+                    weeks {
+                      contributionDays {
+                        contributionCount
+                        date
+                        weekday
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          `;
+
+          function graphqlRequest() {
+            return new Promise((resolve, reject) => {
+              const payload = JSON.stringify({
+                query: graphqlQuery,
+                variables: {
+                  login: USERNAME
+                }
+              });
+
+              const req = https.request(
+                {
+                  hostname: "api.github.com",
+                  path: "/graphql",
+                  method: "POST",
+                  headers: {
+                    "Authorization": `Bearer ${TOKEN}`,
+                    "Content-Type": "application/json",
+                    "User-Agent": "github-contribution-snake",
+                    "Content-Length": Buffer.byteLength(payload)
+                  }
+                },
+                (res) => {
+                  let body = "";
+
+                  res.on("data", chunk => {
+                    body += chunk;
+                  });
+
+                  res.on("end", () => {
+                    try {
+                      const parsed = JSON.parse(body);
+
+                      if (res.statusCode < 200 || res.statusCode >= 300) {
+                        reject(
+                          new Error(
+                            `GitHub GraphQL HTTP ${res.statusCode}: ${body}`
+                          )
+                        );
+                        return;
+                      }
+
+                      if (parsed.errors) {
+                        reject(
+                          new Error(
+                            `GitHub GraphQL error: ${JSON.stringify(parsed.errors)}`
+                          )
+                        );
+                        return;
+                      }
+
+                      resolve(parsed.data);
+                    } catch (error) {
+                      reject(error);
+                    }
+                  });
+                }
+              );
+
+              req.on("error", reject);
+              req.write(payload);
+              req.end();
+            });
+          }
+
+          function escapeXml(value) {
+            return String(value)
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;")
+              .replace(/'/g, "&apos;");
+          }
+
+          function contributionColor(count, darkMode) {
+            if (darkMode) {
+              if (count === 0) return "#161b22";
+              if (count <= 2) return "#0e4429";
+              if (count <= 5) return "#006d32";
+              if (count <= 9) return "#26a641";
+              return "#39d353";
+            }
+
+            if (count === 0) return "#ebedf0";
+            if (count <= 2) return "#9be9a8";
+            if (count <= 5) return "#40c463";
+            if (count <= 9) return "#30a14e";
+            return "#216e39";
+          }
+
+          function buildSvg(calendar, darkMode) {
+            const weeks = calendar.weeks;
+            const columns = weeks.length;
+            const rows = 7;
+
+            const cellSize = 11;
+            const gap = 3;
+
+            const left = 20;
+            const top = 20;
+            const right = 20;
+            const bottom = 34;
+
+            const width =
+              left +
+              columns * cellSize +
+              (columns - 1) * gap +
+              right;
+
+            const height =
+              top +
+              rows * cellSize +
+              (rows - 1) * gap +
+              bottom;
+
+            const cells = [];
+
+            for (let col = 0; col < columns; col++) {
+              const week = weeks[col];
+
+              for (let row = 0; row < rows; row++) {
+                const day = week.contributionDays.find(
+                  d => d.weekday === row
+                );
+
+                const count = day ? day.contributionCount : 0;
+                const date = day ? day.date : "";
+
+                cells.push({
+                  col,
+                  row,
+                  count,
+                  date
+                });
+              }
+            }
+
+            /*
+             * Create a Hamiltonian-style path through the whole grid.
+             *
+             * Column 0: top -> bottom
+             * Column 1: bottom -> top
+             * Column 2: top -> bottom
+             * ...
+             *
+             * This makes every movement from one cell to the next
+             * adjacent, creating a proper Snake-like movement.
+             */
+            const path = [];
+
+            for (let col = 0; col < columns; col++) {
+              const rowsOrder =
+                col % 2 === 0
+                  ? [0, 1, 2, 3, 4, 5, 6]
+                  : [6, 5, 4, 3, 2, 1, 0];
+
+              for (const row of rowsOrder) {
+                path.push({
+                  col,
+                  row
+                });
+              }
+            }
+
+            const foodMap = new Map();
+
+            for (const cell of cells) {
+              foodMap.set(
+                `${cell.col}:${cell.row}`,
+                cell.count
+              );
+            }
+
+            const initialLength = 5;
+            const maxLength = Math.min(
+              120,
+              Math.max(30, columns * 2)
+            );
+
+            let snakeLength = initialLength;
+
+            const frames = [];
+
+            /*
+             * Each contribution cell with count > 0 is treated as food.
+             * When the snake reaches that cell, its body grows by one.
+             */
+            for (let i = 0; i < path.length; i++) {
+              const current = path[i];
+
+              const food =
+                foodMap.get(
+                  `${current.col}:${current.row}`
+                ) || 0;
+
+              if (food > 0) {
+                snakeLength = Math.min(
+                  maxLength,
+                  snakeLength + 1
+                );
+              }
+
+              const start = Math.max(
+                0,
+                i - snakeLength + 1
+              );
+
+              /*
+               * Reverse so the first point is always the head.
+               */
+              const body = path
+                .slice(start, i + 1)
+                .reverse();
+
+              while (body.length < maxLength) {
+                body.push(
+                  body[body.length - 1]
+                );
+              }
+
+              const points = body
+                .map(point => {
+                  const x =
+                    left +
+                    point.col * (cellSize + gap) +
+                    cellSize / 2;
+
+                  const y =
+                    top +
+                    point.row * (cellSize + gap) +
+                    cellSize / 2;
+
+                  return `${x},${y}`;
+                })
+                .join(" ");
+
+              const head = body[0];
+
+              const headX =
+                left +
+                head.col * (cellSize + gap) +
+                cellSize / 2;
+
+              const headY =
+                top +
+                head.row * (cellSize + gap) +
+                cellSize / 2;
+
+              frames.push({
+                points,
+                headX,
+                headY,
+                length: Math.min(
+                  snakeLength,
+                  i + 1
+                )
+              });
+            }
+
+            const totalFrames = frames.length;
+
+            /*
+             * Around 25 seconds per complete run.
+             */
+            const duration = 25;
+
+            const pointsValues = frames
+              .map(frame => frame.points)
+              .join(";");
+
+            const headXValues = frames
+              .map(frame => frame.headX)
+              .join(";");
+
+            const headYValues = frames
+              .map(frame => frame.headY)
+              .join(";");
+
+            const snakeColor = darkMode
+              ? "#58A6FF"
+              : "#0969DA";
+
+            const headColor = darkMode
+              ? "#79C0FF"
+              : "#0550AE";
+
+            const background = darkMode
+              ? "#0D1117"
+              : "#FFFFFF";
+
+            const borderColor = darkMode
+              ? "#30363D"
+              : "#D0D7DE";
+
+            /*
+             * Show a small animated "food pulse" over non-empty
+             * contribution cells. This makes the eating action easier
+             * to see.
+             */
+            const foodDots = cells
+              .filter(cell => cell.count > 0)
+              .map(cell => {
+                const x =
+                  left +
+                  cell.col * (cellSize + gap) +
+                  cellSize / 2;
+
+                const y =
+                  top +
+                  cell.row * (cellSize + gap) +
+                  cellSize / 2;
+
+                return `
+                  <circle
+                    cx="${x}"
+                    cy="${y}"
+                    r="1.4"
+                    fill="${darkMode ? "#7EE787" : "#1A7F37"}"
+                    opacity="0.85"
+                  />
+                `;
+              })
+              .join("");
+
+            const totalContributions =
+              calendar.totalContributions;
+
+            return `<?xml version="1.0" encoding="UTF-8"?>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="${width}"
+            height="${height}"
+            viewBox="0 0 ${width} ${height}"
+            role="img"
+            aria-label="Animated GitHub contribution snake"
+          >
+
+            <rect
+              width="100%"
+              height="100%"
+              rx="12"
+              fill="${background}"
+              stroke="${borderColor}"
+            />
+
+            <g>
+              ${cells.map(cell => {
+                const x =
+                  left +
+                  cell.col * (cellSize + gap);
+
+                const y =
+                  top +
+                  cell.row * (cellSize + gap);
+
+                return `
+                  <rect
+                    x="${x}"
+                    y="${y}"
+                    width="${cellSize}"
+                    height="${cellSize}"
+                    rx="2.5"
+                    fill="${contributionColor(
+                      cell.count,
+                      darkMode
+                    )}"
+                  >
+                    <title>
+                      ${escapeXml(
+                        `${cell.date}: ${cell.count} contribution${cell.count === 1 ? "" : "s"}`
+                      )}
+                    </title>
+                  </rect>
+                `;
+              }).join("")}
+            </g>
+
+            <g>
+              ${foodDots}
+            </g>
+
+            <!--
+              Animated snake body.
+              The body gets longer whenever a contribution cell
+              is encountered.
+            -->
+            <polyline
+              fill="none"
+              stroke="${snakeColor}"
+              stroke-width="${cellSize * 0.72}"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              points="${frames[0].points}"
+            >
+              <animate
+                attributeName="points"
+                dur="${duration}s"
+                repeatCount="indefinite"
+                calcMode="discrete"
+                values="${pointsValues}"
+              />
+            </polyline>
+
+            <!-- Snake head -->
+            <circle
+              cx="${frames[0].headX}"
+              cy="${frames[0].headY}"
+              r="${cellSize * 0.43}"
+              fill="${headColor}"
+            >
+              <animate
+                attributeName="cx"
+                dur="${duration}s"
+                repeatCount="indefinite"
+                calcMode="discrete"
+                values="${headXValues}"
+              />
+
+              <animate
+                attributeName="cy"
+                dur="${duration}s"
+                repeatCount="indefinite"
+                calcMode="discrete"
+                values="${headYValues}"
+              />
+            </circle>
+
+            <!-- Head highlight -->
+            <circle
+              cx="${frames[0].headX - 1.8}"
+              cy="${frames[0].headY - 1.8}"
+              r="1.5"
+              fill="#FFFFFF"
+              opacity="0.9"
+            >
+              <animate
+                attributeName="cx"
+                dur="${duration}s"
+                repeatCount="indefinite"
+                calcMode="discrete"
+                values="${frames.map(f => f.headX - 1.8).join(";")}"
+              />
+
+              <animate
+                attributeName="cy"
+                dur="${duration}s"
+                repeatCount="indefinite"
+                calcMode="discrete"
+                values="${frames.map(f => f.headY - 1.8).join(";")}"
+              />
+            </circle>
+
+            <!-- Footer -->
+            <text
+              x="${width / 2}"
+              y="${height - 12}"
+              text-anchor="middle"
+              font-family="Arial, Helvetica, sans-serif"
+              font-size="10"
+              fill="${darkMode ? "#8B949E" : "#57606A"}"
+            >
+              ${escapeXml(
+                `🐍 Contribution Snake • ${totalContributions.toLocaleString()} contributions`
+              )}
+            </text>
+
+          </svg>`;
+          }
+
+          async function main() {
+            console.log(
+              `Fetching contribution calendar for ${USERNAME}...`
+            );
+
+            const data = await graphqlRequest();
+
+            const calendar =
+              data &&
+              data.user &&
+              data.user.contributionsCollection &&
+              data.user.contributionsCollection.contributionCalendar;
+
+            if (!calendar) {
+              throw new Error(
+                "Contribution calendar was not returned."
+              );
+            }
+
+            console.log(
+              `Total contributions: ${calendar.totalContributions}`
+            );
+
+            console.log(
+              `Weeks received: ${calendar.weeks.length}`
+            );
+
+            fs.mkdirSync("/tmp/custom-snake", {
+              recursive: true
+            });
+
+            const lightSvg =
+              buildSvg(calendar, false);
+
+            const darkSvg =
+              buildSvg(calendar, true);
+
+            fs.writeFileSync(
+              "/tmp/custom-snake/github-contribution-grid-snake.svg",
+              lightSvg,
+              "utf8"
+            );
+
+            fs.writeFileSync(
+              "/tmp/custom-snake/github-contribution-grid-snake-dark.svg",
+              darkSvg,
+              "utf8"
+            );
+
+            console.log(
+              "Custom snake SVGs generated successfully."
+            );
+          }
+
+          main().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Publish snake to output branch
+        run: |
+          set -e
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin output || true
+
+          git checkout --orphan output
+
+          git reset
+
+          git clean -fdx
+
+          cp /tmp/custom-snake/github-contribution-grid-snake.svg .
+          cp /tmp/custom-snake/github-contribution-grid-snake-dark.svg .
+
+          touch .nojekyll
+
+          git add github-contribution-grid-snake.svg
+          git add github-contribution-grid-snake-dark.svg
+          git add .nojekyll
+
+          git commit -m "Update custom contribution snake"
+
+          git push origin output --force
