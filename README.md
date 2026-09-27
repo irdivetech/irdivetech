@@ -29,15 +29,13 @@ Currently learning, building, and improving one project at a time.
 
 ## 👨‍💻 About Me
 
-* 🎓 RPL / PPLG graduate
-* 💻 Junior Fullstack Web Developer
-* 🔧 Focused on building web applications and digital systems
-* 🧠 Interested in backend development, system architecture, and automation
-* 🎨 Enjoy turning ideas and workflows into usable applications
-* 🚀 Currently exploring **Next.js, Python, and AI**
-* 📚 Continuously improving my programming and English skills
+Hi, I'm **Dilfan Najib**, a **Junior Fullstack Web Developer** from Cianjur, Indonesia.
 
-> *"Life is not about finding yourself. Life is about creating yourself."*
+💻 Building web applications & digital systems
+🔧 Main stack: **Laravel, PHP, JavaScript & MySQL**
+🧠 Interested in **Backend, System Design & Automation**
+🚀 Exploring **Next.js, Python & AI**
+📚 Always learning and improving
 
 ---
 
