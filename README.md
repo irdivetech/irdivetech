@@ -56,7 +56,7 @@ Currently learning, building, and improving one project at a time.
 
 <p align="center">
 
-<img src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/github-contribution-grid-snake.svg" alt="GitHub Contribution Snake"/>
+<img src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/github-contribution-grid-snake.svg" />
 
 </p>
 
@@ -66,9 +66,8 @@ Currently learning, building, and improving one project at a time.
 
 <div align="center">
 
-<img src="https://github-readme-stats.vercel.app/api?username=irdivetech&show_icons=true&theme=transparent&hide_border=true&rank_icon=github" height="170"/>
-
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=irdivetech&layout=compact&theme=transparent&hide_border=true" height="170"/>
+<img src="./profile/stats.svg" height="170" />
+<img src="./profile/top-langs.svg" height="170" />
 
 </div>
 
