@@ -1,6 +1,41 @@
-<p align="center">
-  <img
-    src="https://raw.githubusercontent.com/USERNAME/USERNAME/output/pacman-contribution-graph.svg"
-    alt="Pac-Man Contribution Graph"
-  />
-</p>
+name: Generate Pac-Man Contribution Graph
+
+on:
+  schedule:
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create output directory
+        run: mkdir -p dist
+
+      - name: Generate Pac-Man contribution graph
+        uses: AndreRuperto/svg-pacman-contributions@main
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          theme: github-dark
+          output_directory: dist
+          player_style: oportunista
+
+      - name: Publish SVG to output branch
+        uses: crazy-max/ghaction-github-pages@v3.1.0
+        with:
+          build_dir: dist
+          target_branch: output
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
