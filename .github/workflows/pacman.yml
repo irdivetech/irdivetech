@@ -1,26 +1,23 @@
-name: Generate Pac-Man Contribution Graph
+name: Update Pac-Man Contribution
 
 on:
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "0 0 * * *"
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    permissions:
+      contents: write
 
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create output directory
+      - name: Create dist directory
         run: mkdir -p dist
 
       - name: Generate Pac-Man contribution graph
@@ -35,7 +32,7 @@ jobs:
       - name: Publish SVG to output branch
         uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
-          build_dir: dist
           target_branch: output
+          build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
