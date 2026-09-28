@@ -8,7 +8,7 @@ I’m particularly interested in backend development, database design, business 
 
 I enjoy learning new technologies, solving problems, and creating useful software that brings real value to people and organizations.
 
-<p align="left">
+<p align="center">
   <a href="https://portofolio-dilfan.irdive.my.id/">
     <img src="https://img.shields.io/badge/Portfolio-0B1E35?style=for-the-badge&logo=googlechrome&logoColor=FFFFFF"/>
   </a>
@@ -24,8 +24,8 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
   <a href="https://www.instagram.com/_dlvan.n/">
     <img src="https://img.shields.io/badge/Instagram-0B1E35?style=for-the-badge&logo=instagram&logoColor=E4405F"/>
   </a>
-  <a href="https://www.facebook.com/profile.php?fb_profile_edit_entry_point=%7B%22click_point%22%3A%22edit_profile_button%22%2C%22feature%22%3A%22profile_header%22%7D&id=100070652250455&sk=about">
-    <img src="https://img.shields.io/badge/Facebook-Dilfan%20Najib-0B1E35?style=for-the-badge&logo=facebook&logoColor=1877F2"/>
+  <a href="https://www.facebook.com/profile.php?id=100070652250455">
+    <img src="https://img.shields.io/badge/Facebook-0B1E35?style=for-the-badge&logo=facebook&logoColor=1877F2"/>
   </a>
 </p>
 
