@@ -32,34 +32,18 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 
 <img src="https://skillicons.dev/icons?i=html,css,js,php&theme=dark" />
 
-<img src="https://skillicons.dev/icons?i=laravel,go,tailwind,vite&theme=dark" />
+<img src="https://skillicons.dev/icons?i=laravel,mysql,tailwind,vite&theme=dark" />
 
-<img src="https://skillicons.dev/icons?i=git,gitlab,github,vscode&theme=dark" />
+<img src="https://skillicons.dev/icons?i=git,github,vscode&theme=dark" />
 
 <img src="https://skillicons.dev/icons?i=canva,ps,ai&theme=dark" />
 
-<p>
-  <img
-    src="https://cdn.simpleicons.org/microsoftword/2B579A"
-    width="48"
-    height="48"
-    alt="Microsoft Word"
-  />
-  &nbsp;&nbsp;
-  <img
-    src="https://cdn.simpleicons.org/microsoftexcel/217346"
-    width="48"
-    height="48"
-    alt="Microsoft Excel"
-  />
-  &nbsp;&nbsp;
-  <img
-    src="https://cdn.jsdelivr.net/npm/@thesvg/icons/icons/antigravity-google.svg"
-    width="48"
-    height="48"
-    alt="Google Antigravity"
-  />
-</p>
+<br>
+
+<img src="..." alt="REST API" />
+<img src="..." alt="Microsoft Word" />
+<img src="..." alt="Microsoft Excel" />
+<img src="..." alt="Antigravity" />
 
 </div>
 
