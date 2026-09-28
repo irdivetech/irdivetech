@@ -29,7 +29,21 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
   </a>
 </p>
 
-## Technologies & Tools <div align="center"> <img src="https://skillicons.dev/icons?i=html,css,js,php&theme=dark" /> <img src="https://skillicons.dev/icons?i=laravel,mysql,tailwind,vite&theme=dark" /> <img src="https://skillicons.dev/icons?i=git,github,vscode&theme=dark" /> <img src="https://skillicons.dev/icons?i=canva,ps,ai&theme=dark" /> <br> <img src="..." alt="REST API" /> <img src="..." alt="Microsoft Word" /> <img src="..." alt="Microsoft Excel" /> <img src="..." alt="Antigravity" /> </div>
+## Technologies & Tools
+
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=html,css,js,php&theme=dark" />
+
+<img src="https://skillicons.dev/icons?i=laravel,mysql,tailwind,vite&theme=dark" />
+
+<img src="https://skillicons.dev/icons?i=git,github,vscode&theme=dark" />
+
+<img src="https://skillicons.dev/icons?i=canva,ps,ai&theme=dark" />
+
+</div>
+
+---
 
 ## GitHub Statistics
 
