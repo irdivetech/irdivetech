@@ -26,16 +26,6 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 
 </div>
 
----
-
-## About Me
-
-I'm **Dilfan Najib**, a Junior Fullstack Web Developer from Cianjur, Indonesia.
-
-I build web applications and digital systems with a focus on **problem solving, backend development, and practical system design**. My main experience is with **Laravel, PHP, JavaScript, and MySQL**, while I'm currently exploring **Next.js, Python, automation, and AI**.
-
----
-
 ## Core Tech Stack
 
 <div align="center">
