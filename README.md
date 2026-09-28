@@ -30,43 +30,23 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 
 <div align="center">
 
-<!-- Row 1 -->
 <img src="https://skillicons.dev/icons?i=html,css,js,php&theme=dark" />
 
-<br>
-
-<!-- Row 2 -->
 <img src="https://skillicons.dev/icons?i=laravel,mysql,tailwind,vite&theme=dark" />
 
-<br>
-
-<!-- Row 3 -->
 <img src="https://skillicons.dev/icons?i=git,github,vscode&theme=dark" />
 
-<br>
-
-<!-- Row 4 -->
-<img src="https://skillicons.dev/icons?i=canva,ps&theme=dark" />
+<img src="https://skillicons.dev/icons?i=canva,ps,ai&theme=dark" />
 
 <br>
 
-<!-- Additional Tools -->
-<img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg"
-     width="48"
-     height="48"
-     alt="Microsoft Word" />
-
-<img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg"
-     width="48"
-     height="48"
-     alt="Microsoft Excel" />
-
-<img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/antigravity-google/default.svg"
-     width="48"
-     height="48"
-     alt="Antigravity" />
+<img src="..." alt="REST API" />
+<img src="..." alt="Microsoft Word" />
+<img src="..." alt="Microsoft Excel" />
+<img src="..." alt="Antigravity" />
 
 </div>
+
 ## Featured Projects
 
 ### Production Order Management System
