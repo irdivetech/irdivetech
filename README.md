@@ -33,20 +33,52 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 
 <div align="center">
 
+<!-- Row 1 -->
 <img src="https://skillicons.dev/icons?i=html,css,js,php&theme=dark" />
-
-<img src="https://skillicons.dev/icons?i=laravel,mysql,tailwind,vite&theme=dark" />
-
-<img src="https://skillicons.dev/icons?i=git,github,vscode&theme=dark" />
-
-<img src="https://skillicons.dev/icons?i=canva,ps,ai&theme=dark" />
 
 <br>
 
-<img src="..." alt="REST API" />
-<img src="..." alt="Microsoft Word" />
-<img src="..." alt="Microsoft Excel" />
-<img src="..." alt="Antigravity" />
+<!-- Row 2 -->
+<img src="https://skillicons.dev/icons?i=laravel,mysql,tailwind,vite&theme=dark" />
+
+<br>
+
+<!-- Row 3 -->
+<img src="https://api.iconify.design/simple-icons:swagger.svg?color=%2385EA2D"
+     width="48"
+     height="48"
+     alt="REST API" />
+
+<img src="https://skillicons.dev/icons?i=git&theme=dark" />
+
+<img src="https://skillicons.dev/icons?i=github&theme=dark" />
+
+<img src="https://skillicons.dev/icons?i=vscode&theme=dark" />
+
+<br>
+
+<!-- Row 4 -->
+<img src="https://skillicons.dev/icons?i=canva,ps&theme=dark" />
+
+<img src="https://cdn.simpleicons.org/microsoftword/2B579A"
+     width="48"
+     height="48"
+     alt="Microsoft Word" />
+
+<img src="https://cdn.simpleicons.org/microsoftexcel/217346"
+     width="48"
+     height="48"
+     alt="Microsoft Excel" />
+
+<br>
+
+<!-- Row 5 -->
+<img src="https://skillicons.dev/icons?i=ai&theme=dark" />
+
+<img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/antigravity-google/default.svg"
+     width="48"
+     height="48"
+     alt="Antigravity" />
 
 </div>
 
