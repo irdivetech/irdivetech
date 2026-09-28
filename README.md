@@ -33,56 +33,37 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 
 <div align="center">
 
-<!-- Row 1 -->
 <img src="https://skillicons.dev/icons?i=html,css,js,php&theme=dark" />
 
-<br>
-
-<!-- Row 2 -->
 <img src="https://skillicons.dev/icons?i=laravel,mysql,tailwind,vite&theme=dark" />
 
+<img src="https://skillicons.dev/icons?i=git,github,vscode&theme=dark" />
+
+<img src="https://skillicons.dev/icons?i=canva,ps,ai&theme=dark" />
+
 <br>
 
-<!-- Row 3 -->
-<img src="https://api.iconify.design/simple-icons:swagger.svg?color=%2385EA2D"
+<img src="https://www.svgrepo.com/show/447473/rest-api.svg"
      width="48"
      height="48"
      alt="REST API" />
 
-<img src="https://skillicons.dev/icons?i=git&theme=dark" />
-
-<img src="https://skillicons.dev/icons?i=github&theme=dark" />
-
-<img src="https://skillicons.dev/icons?i=vscode&theme=dark" />
-
-<br>
-
-<!-- Row 4 -->
-<img src="https://skillicons.dev/icons?i=canva,ps&theme=dark" />
-
-<img src="https://cdn.simpleicons.org/microsoftword/2B579A"
+<img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg"
      width="48"
      height="48"
      alt="Microsoft Word" />
 
-<img src="https://cdn.simpleicons.org/microsoftexcel/217346"
+<img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg"
      width="48"
      height="48"
      alt="Microsoft Excel" />
-
-<br>
-
-<!-- Row 5 -->
-<img src="https://skillicons.dev/icons?i=ai&theme=dark" />
 
 <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/antigravity-google/default.svg"
      width="48"
      height="48"
      alt="Antigravity" />
 
-</div>
-
----
+</div>---
 
 ## GitHub Statistics
 
