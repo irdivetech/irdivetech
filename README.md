@@ -81,6 +81,8 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 
 </div>
 
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2B0505,50:5C0A0A,100:991B1B&height=120&section=footer&animation=fadeIn" width="100%"/>
+
 ---
 
 
