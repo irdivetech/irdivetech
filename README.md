@@ -47,32 +47,6 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 
 </div>
 
-## Featured Projects
-
-### Production Order Management System
-
-A production order management system designed to manage workflow from order creation to delivery.
-
-**Stack:** Laravel, PHP, MySQL
-
-### Alumni Monitoring Dashboard
-
-A dashboard for managing, monitoring, and visualizing alumni data.
-
-**Stack:** Laravel, PHP, MySQL, JavaScript
-
-### Attendance System
-
-A school attendance system using QR Code, location verification, and face recognition.
-
-**Stack:** Laravel, PHP, MySQL, JavaScript
-
-### Eco Track
-
-A web application focused on environmental tracking and data management.
-
-**Stack:** Laravel, PHP, MySQL
-
 ---
 
 ## GitHub Statistics
