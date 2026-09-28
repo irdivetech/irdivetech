@@ -1,8 +1,8 @@
-<div align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0F172A,50:1E3A8A,100:2563EB&height=260&section=header&text=Dilfan%20Najib&fontSize=60&fontColor=FFFFFF&animation=fadeIn&fontAlignY=40&desc=Junior%20Fullstack%20Web%20Developer%20%7C%20Cianjur%2C%20Indonesia&descSize=18&descAlignY=62" width="100%"/>
 
-<img src="./assets/github-header.svg" width="100%" alt="Dilfan Najib — Junior Fullstack Web Developer"/>
+## Hi, I'm Dilfan Najib
 
-<br>
+Junior Fullstack Web Developer from Cianjur, Indonesia
 
 <a href="https://portofolio-dilfan.irdive.my.id/">
 <img src="https://img.shields.io/badge/Portfolio-0B1E35?style=for-the-badge&logo=googlechrome&logoColor=FFFFFF"/>
