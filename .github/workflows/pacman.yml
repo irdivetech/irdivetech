@@ -8,25 +8,56 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   generate:
-    permissions:
-      contents: write
-
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
-      - name: Generate contribution graph SVGs
+      - name: Generate Pac-Man
         uses: abozanona/pacman-contribution-graph@main
         with:
-          github_user_name: ${{ github.repository_owner }}
+          github_user_name: irdivetech
           games: "pacman"
+          hide_month_labels: "false"
 
-      - name: Push SVGs to output branch
-        uses: crazy-max/ghaction-github-pages@v3.1.0
-        with:
-          target_branch: output
-          build_dir: dist
+      - name: Publish Pac-Man without deleting Snake
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          rm -rf output
+
+          git clone \
+            --depth 1 \
+            --branch output \
+            "$REPO_URL" \
+            output
+
+          cp dist/pacman-contribution-graph.svg \
+            output/pacman-contribution-graph.svg
+
+          if [ -f dist/pacman-contribution-graph-dark.svg ]; then
+            cp dist/pacman-contribution-graph-dark.svg \
+              output/pacman-contribution-graph-dark.svg
+          fi
+
+          cd output
+
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            pacman-contribution-graph.svg \
+            pacman-contribution-graph-dark.svg
+
+          git commit -m "Update Pac-Man Game" || echo "No changes"
+
+          git push origin output
