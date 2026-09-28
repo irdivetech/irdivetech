@@ -1,4 +1,4 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:15803D,50:65A30D,100:F97316&height=260&section=header&text=Dilfan%20Najib&fontSize=60&fontColor=FFFFFF&animation=fadeIn&fontAlignY=40&desc=Junior%20Fullstack%20Web%20Developer%20%7C%20Cianjur%2C%20Indonesia&descSize=18&descAlignY=62" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:450A0A,50:B91C1C,100:EF4444&height=260&section=header&text=Dilfan%20Najib&fontSize=60&fontColor=FFFFFF&animation=fadeIn&fontAlignY=40&desc=Junior%20Fullstack%20Web%20Developer%20%7C%20Cianjur%2C%20Indonesia&descSize=18&descAlignY=62" width="100%"/>
 
 ## Hi, I'm Dilfan Najib
 
