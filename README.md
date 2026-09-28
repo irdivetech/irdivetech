@@ -58,20 +58,18 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 
 ## Contribution Activity
 
+<p align="center">
+  <img
+    src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/pacman-contribution-graph.svg"
+    alt="Pac-Man Contribution Graph"
+  />
+</p>
+
 <div align="center">
-
-<img 
-  src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/pacman-contribution-graph.svg"
-  alt="Pac-Man Contribution Graph"
-/>
-
-<br>
-
-<img 
-  src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/github-contribution-grid-snake.svg"
-  alt="Contribution Snake"
-/>
-
+  <img
+    src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/github-contribution-grid-snake.svg"
+    alt="Contribution Snake"
+  />
 </div>
 
 ---
