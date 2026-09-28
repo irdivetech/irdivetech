@@ -59,20 +59,10 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 ## Contribution Activity
 
 <p align="center">
-  <picture>
-    <source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://raw.githubusercontent.com/irdivetech/irdivetech/output/pacman-contribution-graph-dark.svg"
-    />
-    <source
-      media="(prefers-color-scheme: light)"
-      srcset="https://raw.githubusercontent.com/irdivetech/irdivetech/output/pacman-contribution-graph.svg"
-    />
-    <img
-      alt="Pac-Man Contribution Graph"
-      src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/pacman-contribution-graph.svg"
-    />
-  </picture>
+  <img
+    src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/pacman-contribution-graph.svg"
+    alt="Pac-Man Contribution Graph"
+  />
 </p>
 
 <div align="center">
@@ -83,7 +73,6 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
 </div>
 
 ---
-
 ## GitHub Streak
 
 <div align="center">
