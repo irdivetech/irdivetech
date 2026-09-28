@@ -1,8 +1,12 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:2B0505,50:5C0A0A,100:991B1B&height=170&section=header&text=Hi,%20I'm%20Dilfan%20Najib&fontSize=42&fontColor=FFD166&fontFamily=Segoe%20UI&animation=fadeIn&fontAlignY=42&desc=Junior%20Fullstack%20Web%20Developer&descSize=25&descAlignY=68" width="100%"/>
 
-## Hi, I'm Dilfan Najib
+I'm a Junior Full-Stack Web Developer and a graduate of the Rekayasa Perangkat Lunak (RPL) program, focused on building responsive, efficient, and user-friendly web applications.
 
-Junior Fullstack Web Developer from Cianjur, Indonesia
+I primarily work with Laravel, Next.js, JavaScript, and MySQL, turning operational needs into practical digital solutions. My projects include production order management systems, online admission platforms, and smart attendance systems with QR codes, facial recognition, and location verification.
+
+I’m particularly interested in backend development, database design, business process digitalization, and building reliable systems that are easy to use and maintain.
+
+I enjoy learning new technologies, solving problems, and creating useful software that brings real value to people and organizations.
 
 <a href="https://portofolio-dilfan.irdive.my.id/">
 <img src="https://img.shields.io/badge/Portfolio-0B1E35?style=for-the-badge&logo=googlechrome&logoColor=FFFFFF"/>
