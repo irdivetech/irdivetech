@@ -1,4 +1,4 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2B0505,50:5C0A0A,100:991B1B&height=170&section=header&text=Hi,%20I'm%20Dilfan%20Najib&fontSize=42&fontColor=FFD166&fontFamily=Segoe%20UI&animation=blinking&fontAlignY=42&desc=Junior%20Fullstack%20Web%20Developer&descSize=25&descAlignY=68" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2B0505,50:5C0A0A,100:991B1B&height=170&section=header&text=Hi,%20I'm%20Dilfan%20Najib&fontSize=42&fontColor=FFD166&fontFamily=Segoe%20UI&animation=fadeIn&fontAlignY=42&desc=Junior%20Fullstack%20Web%20Developer&descSize=25&descAlignY=68" width="100%"/>
 
 ## Hi, I'm Dilfan Najib
 
