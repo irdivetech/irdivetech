@@ -65,14 +65,7 @@ I enjoy learning new technologies, solving problems, and creating useful softwar
   />
 </p>
 
-<div align="center">
-  <img
-    src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/github-contribution-grid-snake.svg"
-    alt="Contribution Snake"
-  />
-</div>
-
----
+<div align="center"> <img src="https://raw.githubusercontent.com/irdivetech/irdivetech/output/github-contribution-grid-snake.svg" alt="Contribution Snake"/> </div> ---
 
 ## GitHub Streak
 
