@@ -8,48 +8,55 @@ I’m particularly interested in backend development, database design, business 
 
 I enjoy learning new technologies, solving problems, and creating useful software that brings real value to people and organizations.
 
-<a href="https://portofolio-dilfan.irdive.my.id/">
-<img src="https://img.shields.io/badge/Portfolio-0B1E35?style=for-the-badge&logo=googlechrome&logoColor=FFFFFF"/>
-</a>
-<a href="https://github.com/irdivetech">
-<img src="https://img.shields.io/badge/GitHub-0B1E35?style=for-the-badge&logo=github&logoColor=FFFFFF"/>
-</a>
-<a href="https://wa.me/6287811251528">
-<img src="https://img.shields.io/badge/WhatsApp-0B1E35?style=for-the-badge&logo=whatsapp&logoColor=25D366"/>
-</a>
-<a href="https://www.linkedin.com/in/dilfan-najib-965487422/">
-<img src="https://img.shields.io/badge/LinkedIn-0B1E35?style=for-the-badge&logo=linkedin&logoColor=0A66C2"/>
-</a>
-<a href="https://www.instagram.com/_dlvan.n/">
-<img src="https://img.shields.io/badge/Instagram-0B1E35?style=for-the-badge&logo=instagram&logoColor=E4405F"/>
-</a>
-
-</div>
+<p align="left">
+  <a href="https://portofolio-dilfan.irdive.my.id/">
+    <img src="https://img.shields.io/badge/Portfolio-0B1E35?style=for-the-badge&logo=googlechrome&logoColor=FFFFFF"/>
+  </a>
+  <a href="https://github.com/irdivetech">
+    <img src="https://img.shields.io/badge/GitHub-0B1E35?style=for-the-badge&logo=github&logoColor=FFFFFF"/>
+  </a>
+  <a href="https://wa.me/6287811251528">
+    <img src="https://img.shields.io/badge/WhatsApp-0B1E35?style=for-the-badge&logo=whatsapp&logoColor=25D366"/>
+  </a>
+  <a href="https://www.linkedin.com/in/dilfan-najib-965487422/">
+    <img src="https://img.shields.io/badge/LinkedIn-0B1E35?style=for-the-badge&logo=linkedin&logoColor=0A66C2"/>
+  </a>
+  <a href="https://www.instagram.com/_dlvan.n/">
+    <img src="https://img.shields.io/badge/Instagram-0B1E35?style=for-the-badge&logo=instagram&logoColor=E4405F"/>
+  </a>
+</p>
 
 ## Core Tech Stack
 
-<div align="center">
+<div align="left">
 
-<img src="https://skillicons.dev/icons?i=php,laravel,js,mysql,html,css&theme=dark" />
+<img src="https://skillicons.dev/icons?i=php,laravel,js,nextjs,mysql,tailwind&theme=dark" />
 
 </div>
 
 ## Other Technologies
 
-<div align="center">
+<div align="left">
 
-<img src="https://skillicons.dev/icons?i=nextjs,nodejs,python,git,github&theme=dark" />
-
-</div>
-
-## Tools
-
-<div align="center">
-
-<img src="https://skillicons.dev/icons?i=vscode,laragon,postman&theme=dark" />
+<img src="https://skillicons.dev/icons?i=html,css,go&theme=dark" />
 
 </div>
 
+## Development Tools
+
+<div align="left">
+
+<img src="https://skillicons.dev/icons?i=git,github,vscode&theme=dark" />
+
+</div>
+
+## Design & Productivity
+
+<div align="left">
+
+<img src="https://skillicons.dev/icons?i=canva,ps&theme=dark" />
+
+</div>
 ---
 
 ## Featured Projects
